@@ -1,33 +1,36 @@
-#include "stdafx.h"
-#include <allegro5\allegro.h>
-#include <allegro5\allegro_native_dialog.h>
-#include  <allegro5\allegro_primitives.h>
-#include <allegro5\allegro_image.h>
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_native_dialog.h>
+#include  <allegro5/allegro_primitives.h>
+#include <allegro5/allegro_image.h>
 #include <iostream>
-using namespace std;
+//using namespace std; I SAID TO NOT USE NAMESPACE STD
 
 #define width 840
 #define height 680
 
-int main()
+int main(int argc, char **argv)
 {
-	al_init();
 	if (!al_init())
 	{
-		cout << "Failed to initialize Allegro";
+		std::cout << "Failed to initialize Allegro" << std::endl;
 		return -1;
 	}
+
+	if(!al_init_image_addon()) {
+		std::cout << "Failed to load image" << std::endl;
+	}
+
 	ALLEGRO_DISPLAY *myDisplay = al_create_display(width, height);
 	if (!myDisplay)
 	{
-		cout << "Failed to display your window";
+		std::cout << "Failed to display your window";
 	}
 
 	//Variables
 	enum direction { LEFT, RIGHT, UP, DOWN };
 	bool finish = false, draw = true, active = false;
 	int directions = DOWN;
-	float X = 10, Y = 10, speed = 5, sX = 90, sY = 0, monsX = 64, monsY = 0;
+	float X = 10, Y = 10, speed = 5, sX = 90, sY = 0;
 	float FPS = 30;
 
 	//Install
@@ -38,7 +41,6 @@ int main()
 	//Events and Queues
 	ALLEGRO_KEYBOARD_STATE keyboardstate;
 	ALLEGRO_BITMAP *player = al_load_bitmap("player.png");
-	ALLEGRO_BITMAP *monster = al_load_bitmap("monster.png");
 
 	ALLEGRO_EVENT_QUEUE *myqueue = al_create_event_queue();
 	ALLEGRO_TIMER *mytimer = al_create_timer(1 / FPS);
@@ -48,8 +50,7 @@ int main()
 
 	al_start_timer(mytimer);
 
-	while (!finish)
-	{
+	while (!finish) {
 		ALLEGRO_EVENT curEvents;
 		al_wait_for_event(myqueue, &curEvents);
 		al_get_keyboard_state(&keyboardstate);
